@@ -13,30 +13,46 @@ const notas = {
   Si: 31.15
 }
 
+let osciladorList = []
+
 const teclas = document.querySelectorAll('.oitava > div')
 
-function emitirNota(tecla) {
-  const context = new AudioContext()
-  const oscillator = context.createOscillator()
-  const contextGain = context.createGain()
+function configurarAudioContext() {
 
-  oscillator.type = 'square'
+}
 
-  oscillator.connect(contextGain)
-
-  contextGain.connect(context.destination)
-  contextGain.gain.exponentialRampToValueAtTime(0.02, context.currentTime + 0.04)
-
-  if (tecla.classList.contains('selecionada')) {
-    const oitava = tecla.parentNode.getAttributeNames()
+function obterFrequencia(tecla) {
+  const oitava = tecla.parentNode.getAttributeNames()
+  if (osciladorList) {
     if (oitava.includes('o1')) {
-      oscillator.frequency.value = notas.Do
-      oscillator.start()
+      return notas.Do
     }
   }
-  else {
+}
+
+function emitirNota(tecla) {
+  if (tecla.classList.contains('selecionada')) {
+    const context = new AudioContext()
+    const oscillator = context.createOscillator()
+    const contextGain = context.createGain()
+
+    oscillator.type = 'square'
+
+    oscillator.connect(contextGain)
+
+    contextGain.connect(context.destination)
+    contextGain.gain.exponentialRampToValueAtTime(0.02, context.currentTime + 0.04)
+
+    oscillator.frequency.value = obterFrequencia(tecla)
+
     oscillator.start()
-    oscillator.stop()
+    osciladorList.push(oscillator)
+  }
+  else {
+    if (osciladorList) {
+      osciladorList[0].stop()
+      osciladorList.pop(osciladorList[0])
+    }
   }
 }
 
@@ -51,6 +67,8 @@ teclas.forEach(function (tecla) {
     emitirNota(tecla)
   }
 
+  configurarAudioContext()
+
   tecla.onmouseup = () => desmarcar(tecla)
-  // tecla.onmouseleave = () => desmarcar(tecla)
+  tecla.onmouseleave = () => desmarcar(tecla)
 })
