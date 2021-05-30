@@ -48,3 +48,5 @@ document.addEventListener('keyup', (event) => {
   const tecla = document.querySelector(`[key-value="${event.key}"]`)
   desmarcar(tecla)
 })
+
+//API das faixas musicais: https://awiclass.monoame.com/api/command.php?type=get&name=music_dodoro
