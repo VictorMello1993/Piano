@@ -3,12 +3,14 @@ const context = new AudioContext()
 
 let oscillator = null
 
-function emitirNota(tecla) {
+function emitirSom(tecla) {    
   if (tecla.classList.contains('selecionada')) {
     oscillator = context.createOscillator()
 
-    oscillator.type = 'square'
+    oscillator.type = 'sawtooth'
     oscillator.connect(context.destination)
+
+    console.log(tecla)
 
     const frequencia = Number(tecla.attributes[1].value)
 
@@ -23,16 +25,26 @@ function emitirNota(tecla) {
 
 function desmarcar(tecla) {
   tecla.classList.remove('selecionada')
-  emitirNota(tecla)
+  emitirSom(tecla)
 }
 
 function marcar(tecla) {
   tecla.classList.add('selecionada')
-  emitirNota(tecla)
+  emitirSom(tecla)
 }
 
 teclas.forEach(function (tecla) {
-  tecla.onmousedown = () => marcar(tecla)
-  tecla.onmouseup = () => desmarcar(tecla)
-  tecla.onmouseleave = () => desmarcar(tecla)
+  tecla.onmousedown = (event) => marcar(tecla, event)
+  tecla.onmouseup = (event) => desmarcar(tecla, event)
+  tecla.onmouseleave = (event) => desmarcar(tecla, event)  
+})
+
+document.addEventListener('keydown', (event) => {  
+  const tecla = document.querySelector(`[key-value="${event.key}"]`)
+  marcar(tecla)
+})
+
+document.addEventListener('keyup', (event) => {  
+  const tecla = document.querySelector(`[key-value="${event.key}"]`)
+  desmarcar(tecla)
 })
