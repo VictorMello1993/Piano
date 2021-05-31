@@ -1,4 +1,4 @@
-const teclas = document.querySelectorAll('.oitava > div')
+const keys = document.querySelectorAll('.oitava > div')
 
 function createAudioTracks() {
   const audioTracks = document.createElement('div')
@@ -8,8 +8,8 @@ function createAudioTracks() {
 
   const trackList = document.querySelector('.tracks')
 
-  //4 oitavas = 48 teclas
-  for (let i = 0; i < 47; i++) {
+  //4 oitavas = 49 teclas
+  for (let i = 0; i < 48; i++) {
     let audio = document.createElement('audio')
 
     if (i < 6) {
@@ -29,60 +29,68 @@ function setKeyValueOnAudioTracks(){
   const audios = document.querySelectorAll('audio')
 
   for (let i = 0; i < Array.from(audios).length; i++) {
-    audios[i].setAttribute('key-value', teclas[i].getAttribute('key-value'))
+    const octave = keys[i].parentNode.attributes[1].name
+    const note = keys[i].attributes[1].name
+
+    audios[i].setAttribute('key-value', keys[i].getAttribute('key-value'))    
+    audios[i].setAttribute('note', octave + note)    
   }
 }
 
-function emitirSom(tecla, event) {
-  if (tecla.classList.contains('selecionada')) {
+function sound(key, event) {
+  if (key.classList.contains('selecionada')) {
+    const octave = key.parentNode.attributes[1].name
+    const note = key.attributes[1].name    
+    let audio    
+
     if(event.type === 'keydown'){
-      const audio = document.querySelector(`audio[key-value="${tecla.getAttribute('key-value')}"]`)
-      audio.currentTime = 0
-      audio.play()
+      audio = document.querySelector(`audio[key-value="${key.getAttribute('key-value')}"]`)
     }
+    else if(event.type === 'mousedown'){
+      audio = document.querySelector(`audio[note="${octave + note}"]`)
+    }
+
+    audio.currentTime = 0
+    audio.play()
   }
 }
 
-function desmarcar(tecla) {
-  tecla.classList.remove('selecionada')
-  emitirSom(tecla)
+function markOff(key, event) {
+  key.classList.remove('selecionada')
+  sound(key, event)
 }
 
-function marcar(tecla, event) {
-  tecla.classList.add('selecionada')
-  emitirSom(tecla, event)
+function mark(key, event) {
+  key.classList.add('selecionada')
+  sound(key, event)
 }
 
-teclas.forEach((tecla) => {
-  tecla.onmousedown = (event) => {
-    console.log(event)
-    marcar(tecla, event)
+keys.forEach((key) => {
+  key.onmousedown = (event) => {    
+    mark(key, event)
   }
 
-  tecla.onmouseup = (event) => {    
-    console.log(event)
-    desmarcar(tecla, event)
+  key.onmouseup = (event) => {    
+    markOff(key, event)
   }
   
-  tecla.onmouseleave = (event) => {    
-    desmarcar(tecla, event)
+  key.onmouseleave = (event) => {    
+    markOff(key, event)
   }
 })
 
 document.addEventListener('keydown', (event) => {
-  const tecla = document.querySelector(`div[key-value="${event.key}"]`)  
-  console.log(tecla)
-  console.log(event)
-  marcar(tecla, event)
+  const key = document.querySelector(`div[key-value="${event.key}"]`)    
+  mark(key, event)
 })
 
 document.addEventListener('keyup', (event) => {
-  const tecla = document.querySelector(`div[key-value="${event.key}"]`)  
-  desmarcar(tecla, event)
+  const key = document.querySelector(`div[key-value="${event.key}"]`)  
+  markOff(key, event)
 })
 
 createAudioTracks()
 setKeyValueOnAudioTracks()
 
 
-//API das faixas musicais: https://awiclass.monoame.com/api/command.php?type=get&name=music_dodoro
+//API das faixas musicais: https://awiclass.monoame.com/pianosound/

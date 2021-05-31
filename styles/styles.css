@@ -3,7 +3,7 @@
 }
 
 body{
-  background-color: #555;
+  background-color: #555;  
 }
 
 .oitava{
@@ -27,6 +27,8 @@ body{
 
 .teclado{
   display:flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /*Dó sustenido  */
@@ -57,7 +59,7 @@ body{
 
 /*Lá sustenido  */
 [as]{
-  /* 250 (tamanho das 6 primeiras teclas brancas) - 15
+  /* 300 (tamanho das 6 primeiras teclas brancas) - 15
   (metade do tamanho da tecla preta)*/
   left: 285px;
 }
